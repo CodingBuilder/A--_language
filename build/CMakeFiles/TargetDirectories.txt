@@ -1,0 +1,3 @@
+/home/coding_builder/A-- language project/build/CMakeFiles/AMM.dir
+/home/coding_builder/A-- language project/build/CMakeFiles/edit_cache.dir
+/home/coding_builder/A-- language project/build/CMakeFiles/rebuild_cache.dir
