@@ -3,50 +3,120 @@
 #include <optional>
 #include <string>
 #include <variant>
+#include <unordered_map>
 
-enum class TokenType {
-  _return,
-  intLiteral,
-  semi,
-  open_paren,
-  closed_paren,
-  ident,
-  pls_make,
-  assignment
+struct TokenType
+{
+  enum class BinOperator
+  {
+    plus,
+    minus,
+    star,
+    slash
+  };
+
+  enum class Assignment
+  {
+    assign
+  };
+
+  enum class Stmt
+  {
+    _return,
+    pls_make,
+  };
+
+  enum class Expr
+  {
+    ident,
+    intLiteral
+  };
+
+  enum class Punctuation
+  {
+    semi,
+    open_paren,
+    closed_paren
+  };
 };
 
-struct Token {
-  TokenType type;
+using TokenKind = std::variant
+<
+  TokenType::BinOperator,
+  TokenType::Assignment,
+  TokenType::Expr,
+  TokenType::Stmt,
+  TokenType::Punctuation
+>;
+
+struct Token
+{
+  TokenKind type;
   std::optional<std::string> value;
 };
 
-namespace Node {
-  struct ExprIntLit {
+std::unordered_map<std::string, TokenKind> lexer_map = {
+  {"gimme", TokenType::Stmt::_return},
+  {"pls_make", TokenType::Stmt::pls_make},
+  {"+", TokenType::BinOperator::plus},
+  {"-", TokenType::BinOperator::minus},
+  {"*", TokenType::BinOperator::star},
+  {"/", TokenType::BinOperator::slash},
+  {"=>", TokenType::Assignment::assign},
+  {";", TokenType::Punctuation::semi},
+  {"(", TokenType::Punctuation::open_paren},
+  {")", TokenType::Punctuation::closed_paren},
+};
+
+namespace Node
+{
+  struct TermIntLit
+  {
     Token intLit;
   };
 
-  struct ExprIdent {
+  struct TermIdent
+  {
     Token ident;
   };
 
-  struct Expr {
-    std::variant<ExprIntLit, ExprIdent> var_expr;
+  struct Term
+  {
+    std::variant<TermIntLit *, TermIdent *> variant_term;
   };
 
-  struct StmtPlsMake {
+  struct Expr;
+
+  struct BinExpr
+  {
+    TokenType::BinOperator op;
+    Expr *lhs;
+    Expr *rhs;
+  };
+
+  struct Expr
+  {
+    std::variant<Term *, BinExpr *> variant_expr;
+  };
+
+  struct StmtPlsMake
+  {
     Token ident;
-    Expr stmt_expr;
+    Expr *stmt_expr;
   };
 
-  struct StmtExit {
-    Expr exit_expr;
+  struct StmtExit
+  {
+    Expr *exit_expr;
   };
 
-  struct Stmt {
-    std::variant<StmtExit, StmtPlsMake> var_stmt;
+  struct Stmt
+  {
+    std::variant<StmtExit *, StmtPlsMake *> variant_stmt;
   };
 
-  struct Prog {
+  struct Prog
+  {
     std::vector<Stmt> stmts;
   };
 };

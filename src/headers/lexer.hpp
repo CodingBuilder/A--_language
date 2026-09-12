@@ -10,18 +10,19 @@
 class Lexer
 {
 private:
-  std::string src;
-  size_t index;
+  std::string m_src;
+  size_t m_index;
 
+  // A function to look at a specific character
   std::optional<char> peek(size_t offset = 0) const
   {
-    if (index + offset >= src.length())
+    if (m_index + offset >= m_src.length())
     {
       return std::nullopt;
     }
     else
     {
-      return src.at(index + offset);
+      return m_src.at(m_index + offset);
     }
   }
 
@@ -29,11 +30,27 @@ private:
   // and get into the next character
   char consume()
   {
-    return src.at(index++);
+    return m_src.at(m_index++);
+  }
+
+  bool isPrefix(std::string pre)
+  {
+    for (auto const& [k, v] : lexer_map)
+    {
+      if (k.length() > pre.length() && k.starts_with(pre))
+      {
+        return true;
+      }
+    }
+
+    return false;
   }
 
 public:
-  inline explicit Lexer(std::string src) : src(src) { index = 0; }
+  inline explicit Lexer(std::string src)
+      : m_src(src), m_index(0)
+  {
+  }
 
   std::vector<Token> lex()
   {
@@ -42,64 +59,78 @@ public:
 
     while (peek().has_value())
     {
+
       if (std::isalpha(peek().value()))
       {
         while (peek().has_value() && (std::isalnum(peek().value()) || peek().value() == '_'))
         {
           buff.push_back(consume());
         }
-        if (buff == "gimme")
+
+        auto tok = lexer_map.find(buff);
+
+        if (tok != lexer_map.end())
         {
-          tokens.push_back({.type = TokenType::_return});
-          buff.clear();
-        }
-        else if (buff == "pls_make") {
-          tokens.push_back({.type = TokenType::pls_make});
+          tokens.push_back({.type = tok->second});
           buff.clear();
         }
         else
         {
-          tokens.push_back({.type = TokenType::ident, .value = buff});
+          tokens.push_back({.type = TokenType::Expr::ident, .value = buff});
           buff.clear();
-          continue;
         }
       }
+
       else if (std::isdigit(peek().value()))
       {
         while (peek().has_value() && std::isdigit(peek().value()))
         {
           buff.push_back(consume());
         }
-        tokens.push_back({.type = TokenType::intLiteral, .value = buff});
+
+        tokens.push_back({.type = TokenType::Expr::intLiteral, .value = buff});
         buff.clear();
       }
+
       else if (std::isspace(peek().value()))
       {
         consume();
-        continue;
       }
-      else if (peek().value() == '=' && peek(1).value() == '>') {
-        tokens.push_back({.type = TokenType::assignment});
-        consume();
-        consume();
-      }
-      else if (peek().value() == ';')
-      {
-        tokens.push_back({.type = TokenType::semi});
-        consume();
-      }
-      else if (peek().value() == '(') {
-        tokens.push_back({.type = TokenType::open_paren});
-        consume();
-      }
-      else if (peek().value() == ')') {
-        tokens.push_back({.type = TokenType::closed_paren});
-        consume();
-      }
+
       else
-      {
-        std::cerr << "Invalid character: " << peek().value() << std::endl;
-        exit(EXIT_FAILURE);
+      {   
+        size_t last_valid_index = m_index;
+        std::optional<TokenKind> last_token;
+
+        while ((peek().has_value() && !std::isspace(peek().value()) && !std::isalnum(peek().value())))
+        {
+          buff.push_back(consume());
+
+          auto tok = lexer_map.find(buff);
+
+          if (tok != lexer_map.end())
+          {
+            last_token = tok->second;
+            last_valid_index = m_index;
+          }
+
+          if (!isPrefix(buff))
+          {
+            break;
+          }
+        }
+
+        if (last_token.has_value())
+        {
+          m_index = last_valid_index;
+          tokens.push_back({.type = last_token.value()});
+          buff.clear();
+        }
+        else
+        {
+          std::cerr << "ERROR: Invalid token: " << buff << '\n';
+          exit(EXIT_FAILURE);
+        }
       }
     }
 

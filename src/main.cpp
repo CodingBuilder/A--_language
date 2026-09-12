@@ -16,8 +16,10 @@
 #include "./headers/generator.hpp"
 #include "./headers/helpers.hpp"
 
-int main(int argc, char* argv[]) {
-  if (argc != 2) {
+int main(int argc, char *argv[])
+{
+  if (argc != 2)
+  {
     std::cerr << "Incorrect usage. You should type...\n";
     std::cerr << "AMM <input.amm>\n";
     return EXIT_FAILURE;
@@ -27,15 +29,18 @@ int main(int argc, char* argv[]) {
 
   size_t last_dot = file_name.find_last_of(".");
 
-  if (last_dot == std::string::npos || last_dot == 0) {
+  if (last_dot == std::string::npos || last_dot == 0)
+  {
     std::cerr << "Error: Invalid filename. filename is empty or missing a name before the extension.\n";
     exit(EXIT_FAILURE);
   }
 
   std::string extension = file_name.substr(last_dot);
-  for (char &c : extension) tolower(c);
+  for (char &c : extension)
+    tolower(c);
 
-  if (extension != ".amm" && extension != ".a--") {
+  if (extension != ".amm" && extension != ".a--")
+  {
     std::cerr << "Error: Wrong type of files, filename formula should be: <filename>.amm or <filename>.a--\n";
     exit(EXIT_FAILURE);
   }
@@ -50,11 +55,12 @@ int main(int argc, char* argv[]) {
 
   Lexer lexer(content);
   std::vector<Token> fileTokens = lexer.lex();
-
+  
   Parser parser(fileTokens);
   std::optional<Node::Prog> tree = parser.parse();
-
-  if (!tree.has_value()) {
+  
+  if (!tree.has_value())
+  {
     std::cerr << "No return statement found!\n";
     exit(EXIT_FAILURE);
   }

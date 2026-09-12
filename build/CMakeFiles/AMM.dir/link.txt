@@ -1,1 +1,1 @@
-/usr/bin/c++ -g CMakeFiles/AMM.dir/src/main.cpp.o -o AMM 
+/usr/bin/g++ -g CMakeFiles/AMM.dir/src/main.cpp.o -o AMM 

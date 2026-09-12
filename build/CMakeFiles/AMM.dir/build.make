@@ -73,15 +73,15 @@ CMakeFiles/AMM.dir/src/main.cpp.o: CMakeFiles/AMM.dir/flags.make
 CMakeFiles/AMM.dir/src/main.cpp.o: /home/coding_builder/A--\ language\ project/src/main.cpp
 CMakeFiles/AMM.dir/src/main.cpp.o: CMakeFiles/AMM.dir/compiler_depend.ts
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir="/home/coding_builder/A-- language project/build/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/AMM.dir/src/main.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/AMM.dir/src/main.cpp.o -MF CMakeFiles/AMM.dir/src/main.cpp.o.d -o CMakeFiles/AMM.dir/src/main.cpp.o -c "/home/coding_builder/A-- language project/src/main.cpp"
+	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/AMM.dir/src/main.cpp.o -MF CMakeFiles/AMM.dir/src/main.cpp.o.d -o CMakeFiles/AMM.dir/src/main.cpp.o -c "/home/coding_builder/A-- language project/src/main.cpp"
 
 CMakeFiles/AMM.dir/src/main.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/AMM.dir/src/main.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E "/home/coding_builder/A-- language project/src/main.cpp" > CMakeFiles/AMM.dir/src/main.cpp.i
+	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E "/home/coding_builder/A-- language project/src/main.cpp" > CMakeFiles/AMM.dir/src/main.cpp.i
 
 CMakeFiles/AMM.dir/src/main.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/AMM.dir/src/main.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S "/home/coding_builder/A-- language project/src/main.cpp" -o CMakeFiles/AMM.dir/src/main.cpp.s
+	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S "/home/coding_builder/A-- language project/src/main.cpp" -o CMakeFiles/AMM.dir/src/main.cpp.s
 
 # Object files for target AMM
 AMM_OBJECTS = \

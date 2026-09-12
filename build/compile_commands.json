@@ -1,0 +1,8 @@
+[
+{
+  "directory": "/home/coding_builder/A-- language project/build",
+  "command": "/usr/bin/g++  -I\"/home/coding_builder/A-- language project/./src/headers\" -g -std=gnu++20 -o CMakeFiles/AMM.dir/src/main.cpp.o -c \"/home/coding_builder/A-- language project/src/main.cpp\"",
+  "file": "/home/coding_builder/A-- language project/src/main.cpp",
+  "output": "CMakeFiles/AMM.dir/src/main.cpp.o"
+}
+]
