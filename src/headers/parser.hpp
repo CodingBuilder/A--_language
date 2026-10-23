@@ -46,7 +46,7 @@ private:
     else
     {
       std::cerr << error_msg << '\n';
-      return std::nullopt;
+      exit(EXIT_FAILURE);
     }
   }
 
@@ -85,6 +85,46 @@ private:
       term->variant_term = ident_term;
 
       return term;
+    }
+
+    else if (auto val = tryConsume(TokenType::Punctuation::open_paren))
+    {
+      if (auto end = tryConsume(TokenType::Punctuation::closed_paren))
+      {
+        std::cerr << "ERROR: Expected an expression inside the parentheses '()'!\n";
+        exit(EXIT_FAILURE);
+      }
+
+      auto first_term = termParse();
+
+      Node::Term *term = m_arena.allocate<Node::Term>();
+      term->variant_term = first_term.value()->variant_term;
+
+      if (peek().has_value() && isTokenType<TokenType::BinOperator>(peek().value().type))
+      {
+
+        Node::Expr *expr = m_arena.allocate<Node::Expr>();
+        expr->variant_expr = first_term.value();
+
+        auto bin_expr = binExprParse(expr);
+
+        if (!bin_expr.has_value())
+        {
+          return std::nullopt;
+        }
+
+        term = m_arena.allocate<Node::Term>();
+        term->variant_term = bin_expr.value();
+      }
+
+      if (auto end = tryConsume("ERROR: Expected token : ')' to end the expression!", TokenType::Punctuation::closed_paren))
+      {
+        return term;
+      }
+      else
+      {
+        exit(EXIT_FAILURE);
+      }
     }
 
     else
@@ -157,8 +197,59 @@ private:
     return std::nullopt;
   }
 
+  std::optional<Node::AssignExpr* > assignExprParse()
+  {
+    auto ident = consume();
+    Node::AssignExpr *assign_expr = m_arena.allocate<Node::AssignExpr>();
+    assign_expr->ident = ident;
+
+    consume();
+
+    if (auto expr = exprParse())
+    {
+      assign_expr->stmt_expr = expr.value();
+    }
+    else
+    {
+      std::cerr << "Invalid expression! | pls_make <ident> = <expr>\n";
+      exit(EXIT_FAILURE);
+    }
+
+    return assign_expr;
+  }
+
+  std::optional<Node::UnaryExpr *> unaryExprParse()
+  {
+    Node::UnaryExpr *u_expr = m_arena.allocate<Node::UnaryExpr>();
+    
+    auto ident = consume();
+    u_expr->ident = ident;
+
+    auto op = consume().type;
+    auto u_op = std::get<TokenType::UnaryOperator>(op);
+    u_expr->op = u_op;
+
+    return u_expr;
+  }
+
   std::optional<Node::Expr *> exprParse()
   {
+    if (isToken(peek().value().type, TokenType::Expr::ident) && isToken(peek(1).value().type, TokenType::Assignment::assign))
+    {
+      Node::Expr *expr = m_arena.allocate<Node::Expr>();
+      auto assign_expr = assignExprParse();
+      expr->variant_expr = assign_expr.value();
+      return expr;
+    }
+
+    if (isToken(peek().value().type, TokenType::Expr::ident) && isTokenType<TokenType::UnaryOperator>(peek(1).value().type))
+    {
+      Node::Expr *expr = m_arena.allocate<Node::Expr>();
+      auto u_expr = unaryExprParse();
+      expr->variant_expr = u_expr.value();
+      return expr;
+    }
+
     auto term = termParse();
 
     if (!term.has_value())
@@ -183,7 +274,118 @@ private:
       expr->variant_expr = bin_expr.value();
     }
 
+    if (peek().has_value() && isTokenType<TokenType::CompOperator>(peek().value().type))
+    {
+      Node::CompExpr *comp_expr = m_arena.allocate<Node::CompExpr>();
+      comp_expr->lhs = expr;
+
+      auto comp_op = std::get<TokenType::CompOperator>(peek().value().type);
+      comp_expr->op = comp_op;
+      consume();
+
+      auto r_term = termParse();
+
+      if (!r_term.has_value())
+      {
+        std::cerr << "ERROR: Expected an expression!\n";
+        exit(EXIT_FAILURE);
+      }
+
+      Node::Expr *r_expr = m_arena.allocate<Node::Expr>();
+      r_expr->variant_expr = r_term.value();
+
+      if (peek().has_value() && isTokenType<TokenType::BinOperator>(peek().value().type))
+      {
+        auto r_bin_expr = binExprParse(r_expr);
+
+        if (!r_bin_expr.has_value())
+        {
+          return std::nullopt;
+        }
+
+        r_expr = m_arena.allocate<Node::Expr>();
+        r_expr->variant_expr = r_bin_expr.value();
+      }
+
+      comp_expr->rhs = r_expr;
+
+      expr = m_arena.allocate<Node::Expr>();
+
+      expr->variant_expr = comp_expr;
+    }
+
     return expr;
+  }
+
+  std::optional<Node::Scope *> scopeParse()
+  {
+    Node::Scope *scope = m_arena.allocate<Node::Scope>();
+    while (peek().has_value())
+    {
+      if (isTokenType<TokenType::Stmt>(peek().value().type) || isToken(peek().value().type, TokenType::Expr::ident) || isToken(peek().value().type, TokenType::Punctuation::open_curly))
+      {
+        auto stmt = stmtParse();
+        scope->stmts.push_back(stmt.value());
+      }
+      else if (isToken(peek().value().type, TokenType::Punctuation::closed_curly))
+      {
+        consume();
+        break;
+      }
+      else
+      {
+        std::cerr << "Expected: '}'\n";
+        exit(EXIT_FAILURE);
+      }
+    }
+    if (m_index >= m_tokens.size())
+    {
+      std::cerr << "Expected: '}'\n";
+      exit(EXIT_FAILURE);
+    }
+    return scope;
+  }
+
+  Node::StmtCheck *stmtCheckHandle(bool otherwise_check = false)
+  {
+    if (otherwise_check)
+    {
+      consume();
+    }
+    consume();
+    tryConsume("Expected: '('!", TokenType::Punctuation::open_paren);
+
+    Node::StmtCheck *check_stmt = m_arena.allocate<Node::StmtCheck>();
+    Node::Expr *check_expr = m_arena.allocate<Node::Expr>();
+
+    if (auto expr = exprParse())
+    {
+      check_expr = expr.value();
+    }
+    else
+    {
+      std::cerr << "ERROR: Invalid expression!\n";
+      exit(EXIT_FAILURE);
+    }
+
+    check_stmt->expr = check_expr;
+
+    tryConsume("Expected: ')'!", TokenType::Punctuation::closed_paren);
+    tryConsume("ERROR: Expected a scope for the check statement!", TokenType::Punctuation::open_curly);
+    
+    Node::Scope *check_scope = m_arena.allocate<Node::Scope>();
+    if (auto scope = scopeParse())
+    {
+      check_scope = scope.value();
+    }
+    else
+    {
+      std::cerr << "ERROR: Invalid scope!\n";
+      exit(EXIT_FAILURE);
+    }
+
+    check_stmt->scope = check_scope;
+    return check_stmt;
   }
 
   std::optional<Node::Stmt> stmtParse()
@@ -223,7 +425,7 @@ private:
         Node::StmtPlsMake *make_stmt = m_arena.allocate<Node::StmtPlsMake>();
         make_stmt->ident = ident.value();
 
-        if (tryConsume("ERROR: Expected the assignment operator!", TokenType::Assignment::assign))
+        if (tryConsume("Expected: '=>'!", TokenType::Assignment::assign))
         {
 
           if (auto expr = exprParse())
@@ -252,6 +454,93 @@ private:
       {
         exit(EXIT_FAILURE);
       }
+    }
+    else if (isToken(peek().value().type, TokenType::Expr::ident))
+    {
+      Node::Stmt *stmt = m_arena.allocate<Node::Stmt>();
+
+      if (isTokenType<TokenType::UnaryOperator>(peek(1).value().type))
+      {
+        Node::StmtUnary *u_stmt = m_arena.allocate<Node::StmtUnary>();
+
+        auto expr = exprParse();
+        u_stmt->u_expr = expr.value();
+        stmt->variant_stmt = u_stmt;
+      }
+      else
+      {
+        Node::StmtAssign *assign_stmt = m_arena.allocate<Node::StmtAssign>();
+  
+        auto expr = exprParse();
+        assign_stmt->assign_expr = expr.value();
+        stmt->variant_stmt = assign_stmt;
+      }
+
+      tryConsume("Expected: ';'!", TokenType::Punctuation::semi);
+      return *stmt;
+    }
+    else if (tryConsume(TokenType::Punctuation::open_curly))
+    {
+      Node::Stmt *stmt = m_arena.allocate<Node::Stmt>();
+      if (auto scope = scopeParse())
+      {
+        stmt->variant_stmt = scope.value();
+      }
+      else
+      {
+        std::cerr << "ERROR: Invalid scope!\n";
+        exit(EXIT_FAILURE);
+      }
+      return *stmt;
+    }
+    else if (isToken(peek().value().type, TokenType::Stmt::check))
+    {
+      Node::StmtControlFlow *control_flow = m_arena.allocate<Node::StmtControlFlow>();
+
+      Node::StmtCheck *check_stmt = m_arena.allocate<Node::StmtCheck>();
+
+      check_stmt = stmtCheckHandle();
+      control_flow->check_stmt = check_stmt;
+
+      std::vector<Node::StmtCheck *> checks_vec;
+
+      while (true)
+      {
+        if (isToken(peek().value().type, TokenType::Stmt::otherwise) && isToken(peek(1).value().type, TokenType::Stmt::check))
+        {
+          Node::StmtCheck *otherwise_check_stmt = m_arena.allocate<Node::StmtCheck>();
+          otherwise_check_stmt = stmtCheckHandle(true);
+          checks_vec.push_back(otherwise_check_stmt);
+        }
+        else
+        {
+          break;
+        }
+      }
+
+      control_flow->checks_vec = checks_vec;
+
+      if (tryConsume(TokenType::Stmt::otherwise))
+      {
+        Node::StmtOtherwise *otherwise_stmt = m_arena.allocate<Node::StmtOtherwise>();
+        tryConsume("ERROR: Expected a scope for the check statement!", TokenType::Punctuation::open_curly);
+        
+        Node::Scope *otherwise_scope = m_arena.allocate<Node::Scope>();
+        if (auto scope = scopeParse())
+        {
+          otherwise_scope = scope.value();
+        }
+        else
+        {
+          std::cerr << "ERROR: Invalid scope!\n";
+          exit(EXIT_FAILURE);
+        }
+
+        otherwise_stmt->scope = otherwise_scope;
+        control_flow->otherwise_stmt = otherwise_stmt;
+      }
+
+      return Node::Stmt{.variant_stmt = control_flow};
     }
     else
     {

@@ -6,6 +6,7 @@
 
 // Header files
 #include "./components.hpp"
+#include "./helpers.hpp"
 
 class Lexer
 {
@@ -95,6 +96,23 @@ public:
       else if (std::isspace(peek().value()))
       {
         consume();
+      }
+
+      else if (peek().value() == '(' && peek(1).has_value() && peek(1).value() == ':')
+      {
+        consume();
+        consume();
+        
+        while (true)
+        {
+          if (peek().has_value() && peek().value() == ':' && peek(1).has_value() && peek(1).value() == ')')
+          {
+            consume();
+            consume();
+            break;
+          }
+          consume();
+        }
       }
 
       else

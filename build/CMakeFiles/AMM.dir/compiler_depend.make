@@ -29,6 +29,7 @@ CMakeFiles/AMM.dir/src/main.cpp.o: /home/coding_builder/A--\ language\ project/s
   /usr/include/c++/13/bits/cpp_type_traits.h \
   /usr/include/c++/13/bits/cxxabi_forced.h \
   /usr/include/c++/13/bits/cxxabi_init_exception.h \
+  /usr/include/c++/13/bits/deque.tcc \
   /usr/include/c++/13/bits/enable_special_members.h \
   /usr/include/c++/13/bits/erase_if.h \
   /usr/include/c++/13/bits/exception.h \
@@ -75,12 +76,14 @@ CMakeFiles/AMM.dir/src/main.cpp.o: /home/coding_builder/A--\ language\ project/s
   /usr/include/c++/13/bits/stl_algobase.h \
   /usr/include/c++/13/bits/stl_bvector.h \
   /usr/include/c++/13/bits/stl_construct.h \
+  /usr/include/c++/13/bits/stl_deque.h \
   /usr/include/c++/13/bits/stl_function.h \
   /usr/include/c++/13/bits/stl_heap.h \
   /usr/include/c++/13/bits/stl_iterator.h \
   /usr/include/c++/13/bits/stl_iterator_base_funcs.h \
   /usr/include/c++/13/bits/stl_iterator_base_types.h \
   /usr/include/c++/13/bits/stl_pair.h \
+  /usr/include/c++/13/bits/stl_stack.h \
   /usr/include/c++/13/bits/stl_tempbuf.h \
   /usr/include/c++/13/bits/stl_uninitialized.h \
   /usr/include/c++/13/bits/stl_vector.h \
@@ -108,6 +111,7 @@ CMakeFiles/AMM.dir/src/main.cpp.o: /home/coding_builder/A--\ language\ project/s
   /usr/include/c++/13/cwctype \
   /usr/include/c++/13/debug/assertions.h \
   /usr/include/c++/13/debug/debug.h \
+  /usr/include/c++/13/deque \
   /usr/include/c++/13/exception \
   /usr/include/c++/13/ext/aligned_buffer.h \
   /usr/include/c++/13/ext/alloc_traits.h \
@@ -128,6 +132,7 @@ CMakeFiles/AMM.dir/src/main.cpp.o: /home/coding_builder/A--\ language\ project/s
   /usr/include/c++/13/ostream \
   /usr/include/c++/13/pstl/pstl_config.h \
   /usr/include/c++/13/sstream \
+  /usr/include/c++/13/stack \
   /usr/include/c++/13/stdexcept \
   /usr/include/c++/13/streambuf \
   /usr/include/c++/13/string \
@@ -329,10 +334,6 @@ CMakeFiles/AMM.dir/src/main.cpp.o: /home/coding_builder/A--\ language\ project/s
 
 /usr/include/x86_64-linux-gnu/bits/floatn-common.h:
 
-/usr/include/x86_64-linux-gnu/gnu/stubs.h:
-
-/usr/include/x86_64-linux-gnu/bits/endian.h:
-
 /usr/include/x86_64-linux-gnu/bits/cpu-set.h:
 
 /usr/include/x86_64-linux-gnu/bits/byteswap.h:
@@ -383,6 +384,12 @@ CMakeFiles/AMM.dir/src/main.cpp.o: /home/coding_builder/A--\ language\ project/s
 
 /usr/include/c++/13/stdexcept:
 
+/usr/include/c++/13/sstream:
+
+/usr/include/x86_64-linux-gnu/bits/wordsize.h:
+
+/usr/include/c++/13/pstl/pstl_config.h:
+
 /usr/include/c++/13/bits/node_handle.h:
 
 /usr/include/c++/13/ios:
@@ -405,8 +412,6 @@ CMakeFiles/AMM.dir/src/main.cpp.o: /home/coding_builder/A--\ language\ project/s
 
 /home/coding_builder/A--\ language\ project/src/headers/ArenaAllocator.hpp:
 
-/usr/include/c++/13/sstream:
-
 /usr/include/c++/13/bits/locale_classes.h:
 
 /usr/include/c++/13/bits/iterator_concepts.h:
@@ -425,6 +430,8 @@ CMakeFiles/AMM.dir/src/main.cpp.o: /home/coding_builder/A--\ language\ project/s
 
 /usr/include/errno.h:
 
+/usr/include/c++/13/stack:
+
 /usr/include/c++/13/bits/functional_hash.h:
 
 /usr/include/c++/13/bits/nested_exception.h:
@@ -432,6 +439,12 @@ CMakeFiles/AMM.dir/src/main.cpp.o: /home/coding_builder/A--\ language\ project/s
 /usr/include/x86_64-linux-gnu/c++/13/bits/gthr.h:
 
 /usr/include/c++/13/bits/basic_ios.tcc:
+
+/usr/include/c++/13/optional:
+
+/usr/include/c++/13/bits/istream.tcc:
+
+/usr/include/c++/13/bits/exception_ptr.h:
 
 /home/coding_builder/A--\ language\ project/src/headers/lexer.hpp:
 
@@ -527,6 +540,14 @@ CMakeFiles/AMM.dir/src/main.cpp.o: /home/coding_builder/A--\ language\ project/s
 
 /usr/include/c++/13/bits/cpp_type_traits.h:
 
+/usr/include/c++/13/ostream:
+
+/usr/include/c++/13/bits/streambuf_iterator.h:
+
+/usr/include/c++/13/bits/locale_facets.h:
+
+/usr/include/c++/13/bits/move.h:
+
 /usr/include/x86_64-linux-gnu/bits/select.h:
 
 /home/coding_builder/A--\ language\ project/src/headers/parser.hpp:
@@ -541,9 +562,15 @@ CMakeFiles/AMM.dir/src/main.cpp.o: /home/coding_builder/A--\ language\ project/s
 
 /usr/include/c++/13/bits/concept_check.h:
 
-/usr/include/c++/13/bits/locale_facets.h:
+/usr/include/x86_64-linux-gnu/gnu/stubs.h:
 
-/usr/include/c++/13/bits/move.h:
+/usr/include/x86_64-linux-gnu/bits/endian.h:
+
+/usr/include/c++/13/bits/deque.tcc:
+
+/usr/include/c++/13/ext/type_traits.h:
+
+/usr/include/c++/13/iostream:
 
 /usr/include/c++/13/iosfwd:
 
@@ -572,6 +599,8 @@ CMakeFiles/AMM.dir/src/main.cpp.o: /home/coding_builder/A--\ language\ project/s
 /usr/include/c++/13/bits/locale_facets.tcc:
 
 /usr/include/c++/13/bits/requires_hosted.h:
+
+/usr/include/c++/13/bits/stl_deque.h:
 
 /usr/include/c++/13/bits/string_view.tcc:
 
@@ -637,11 +666,7 @@ CMakeFiles/AMM.dir/src/main.cpp.o: /home/coding_builder/A--\ language\ project/s
 
 /usr/include/c++/13/bits/streambuf.tcc:
 
-/usr/include/c++/13/bits/istream.tcc:
-
-/usr/include/c++/13/bits/exception_ptr.h:
-
-/usr/include/c++/13/optional:
+/usr/include/c++/13/bits/stl_stack.h:
 
 /usr/include/c++/13/bits/stringfwd.h:
 
@@ -650,6 +675,8 @@ CMakeFiles/AMM.dir/src/main.cpp.o: /home/coding_builder/A--\ language\ project/s
 /usr/include/c++/13/bits/stl_function.h:
 
 /usr/include/c++/13/bits/utility.h:
+
+/usr/include/c++/13/deque:
 
 /usr/include/c++/13/variant:
 
@@ -701,18 +728,6 @@ CMakeFiles/AMM.dir/src/main.cpp.o: /home/coding_builder/A--\ language\ project/s
 
 /usr/include/c++/13/ext/string_conversions.h:
 
-/usr/include/c++/13/ext/type_traits.h:
-
-/usr/include/c++/13/iostream:
-
 /usr/include/c++/13/functional:
 
-/usr/include/x86_64-linux-gnu/bits/wordsize.h:
-
-/usr/include/c++/13/pstl/pstl_config.h:
-
 /usr/include/c++/13/initializer_list:
-
-/usr/include/c++/13/bits/streambuf_iterator.h:
-
-/usr/include/c++/13/ostream:
